@@ -93,7 +93,8 @@ public class ShreddingMechanic : MonoBehaviour
             //change the orbits of the free cam so the cam angle stay the same
             for (int x = 0; x < cmFreeLook.m_Orbits.Length; x++)
             {
-                cmFreeLook.m_Orbits[x].m_Height += _sizeFactor * globalFactor;
+                if(cmFreeLook.m_Orbits[x].m_Height>0.01f)
+                    cmFreeLook.m_Orbits[x].m_Height += _sizeFactor * globalFactor*0.5f;
                 cmFreeLook.m_Orbits[x].m_Radius += _sizeFactor * globalFactor*4;
 
             }

@@ -5,13 +5,10 @@ using UnityEngine.Events;
 using Cinemachine;
 public class CharacterController3D : MonoBehaviour
 {
-    [Header("Input")]
-    [SerializeField] private KeyCode jumpKey;
     public float minCamTreshold = 1;
 
     [Header("Physic variable")]
     public CharacterStats characterStats;
-    private int remainingJump;
     private bool _isGrounded;   
     private bool isGrounded
     {
@@ -33,14 +30,13 @@ public class CharacterController3D : MonoBehaviour
 
 
     private Vector3 currentMovement;
-    private Vector3 currentCamMouvement;
+    //private Vector3 currentCamMouvement;
     private float currentRotation;
     private Transform m_transform;
     private Vector3 lastDirection;
     private float horizontalTimeStamp;
     private float camMaxDistance;
     private float groundPosY;
-    private float currentPosY;
     private float m_JumpForce;
 
 
@@ -50,20 +46,15 @@ public class CharacterController3D : MonoBehaviour
     void Start()
     {
         m_transform = GetComponent<Transform>();
-        remainingJump = characterStats.maxJumpNumber;
         camMaxDistance = (vcam.position - m_transform.position).magnitude;
         groundPosY =m_transform.position.y;
-
         m_JumpForce = characterStats.jumpForce * 100;
-
         MyEventSystem.instance.OnJump += Jump;
     }
 
     // Update is called once per frame
     void Update()
     {
-       
-      
         HorizontalUpdate();
         IsFalling();
        // CameraController();
@@ -128,7 +119,6 @@ public class CharacterController3D : MonoBehaviour
     bool doOnce;
     private void IsFalling()
     {
-
         if (!isGrounded)
         {
             if (m_rigidbody.velocity.y < 0 && !doOnce)
@@ -142,11 +132,9 @@ public class CharacterController3D : MonoBehaviour
 
     void Jump()
     {
-        if (remainingJump > 0)
+        if (!isJumping)
         {
             doOnce = false;
-            m_animator.SetInteger("JumpNumber", characterStats.maxJumpNumber - remainingJump);
-            remainingJump--;
             m_rigidbody.AddForce(Vector3.up * m_JumpForce, ForceMode.Impulse);
             isGrounded = false;
             m_animator.SetTrigger("Jump");
@@ -164,8 +152,8 @@ public class CharacterController3D : MonoBehaviour
     {
             doOnce = false;
             isGrounded = true;
+            isJumping = false;
             m_animator.SetBool("IsGrounded", true);
-            remainingJump = characterStats.maxJumpNumber;
         
     }
 
